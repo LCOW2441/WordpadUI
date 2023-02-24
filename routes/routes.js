@@ -3,6 +3,43 @@ const router = express.Router();
 
 const Note = require('../notes');
 
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          Notes:
+ *              type: object
+ *              properties:
+ *                  id:
+ *                      type: string
+ *                  userid:
+ *                      type: string
+ *                  title:
+ *                      type: string
+ *                  
+ *                  
+ *                 
+ */
+
+
+
+
+/**
+ *  @swagger
+ * /notes/list:
+ *  post:
+ *      summary: This API for viewing notes
+ *      description: This API for viewing notes
+ *      responses:
+ *            200:
+ *                description: To view notes
+ *                content: 
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#components/schemas/Notes'
+ */
 
 
 
@@ -11,6 +48,25 @@ router.post ("/list", async function(req,res){
     var notes = await Note.find();
     res.json(notes);
 });
+
+
+/**
+ *  @swagger
+ * /notes/add:
+ *  post:
+ *      summary: This API for creating new note
+ *      description: This API for creating new note
+ *      requestBody:
+ *          required: true
+ *          content: 
+ *              application/json:
+ *                  schema:
+ *                       $ref: '#components/schemas/Notes'
+ *      responses:
+ *            200:
+ *                description: Note Created
+ *                
+ */
 
 router.post ("/add", async function(req,res){
     
@@ -33,6 +89,31 @@ router.post ("/add", async function(req,res){
     
 });
 
+/**
+ *  @swagger
+ * /notes/update:
+ *  put:
+ *      summary: This API for updating note
+ *      description: This API for updating note
+ *     
+ *      requestBody:
+ *          required: true 
+ *          content: 
+ *              application/json:
+ *                  schema:
+ *                       $ref: '#components/schemas/Notes'
+ *      responses:
+ *            200:
+ *                description: Note Updated
+ *                content: 
+ *                   application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#components/schemas/Notes'
+ *                
+ */
+
 
 router.put ("/update", function(req,res){
     console.log(req.body)
@@ -50,7 +131,22 @@ router.put ("/update", function(req,res){
 });
 
 
-
+/**
+ *  @swagger
+ * /notes/delete:
+ *  delete:
+ *      summary: This API for deleting notes
+ *      description: This API for deleting notes
+ *      requestBody:
+ *          required: true 
+ *          content: 
+ *              application/json:
+ *                  schema:
+ *                       $ref: '#components/schemas/Notes'
+ *      responses:
+ *            200:
+ *                description: Note Deleted
+ */
 
 router.delete ("/delete", async function(req,res){
     await Note.deleteOne({ id: req.body.id });
