@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
 
 
-mongoose.connect("mongodb://127.0.0.1:27017/userdetails").then(function(){
+mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`).then(function(){
 
 
 
