@@ -3,19 +3,21 @@ const Schema = mongoose.Schema;
 
 
 const NinjaSchema = new Schema({
-    
-    name:{
-                type: String,
-                required:true
-            },
-    email:{
+
+    name: {
         type: String,
-        required:true
+        required: true
     },
-    password:{
-                type: String,
-                required:true
-            }
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    }
+    
 })
 
 const Ninja = new mongoose.model('ninja', NinjaSchema);

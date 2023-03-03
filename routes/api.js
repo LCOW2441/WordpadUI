@@ -1,7 +1,7 @@
-const express = require ('express');
+const express = require('express');
 // const { type } = require('os');
 const router = express.Router();
-const Ninja = require ('../models/ninja');
+const Ninja = require('../models/ninja');
 
 /**
  * @swagger
@@ -40,7 +40,7 @@ const Ninja = require ('../models/ninja');
  */
 
 
-router.get('/ninjas', async function(req,res,next){
+router.get('/ninjas', async function (req, res, next) {
     var user = await Ninja.find();
     res.json(user);
 });
@@ -62,12 +62,27 @@ router.get('/ninjas', async function(req,res,next){
  *                description: User Created
  *                
  */
+const bcrypt = require("bcrypt")
+router.post('/ninjas', async function (req, res, next) {
 
-router.post('/ninjas', function(req,res,next){
-    Ninja.create(req.body).then(function(ninja){
-        res.send(ninja);
-    }).catch(next);
-   
+    const { email } = req.body;
+
+
+    const existingUser = await Ninja.findOne({ email });
+    if (existingUser) {
+        return res.status(409).json({ error: 'Email already in use' });
+    }
+    else{   
+        const ninja = new Ninja({
+            name: req.body.name,
+            email: req.body.email,
+            password: await bcrypt.hash(req.body.password, 10)
+        })
+        ninja.save().then(function (ninja) {
+            res.send("User created");
+        }).catch(next);
+    }
+        
 });
 
 /**
@@ -101,12 +116,13 @@ router.post('/ninjas', function(req,res,next){
  *                
  */
 
-router.put('/ninjas/:id', function(req,res,next){
-    Ninja.findByIdAndUpdate({_id: req.params.id}, req.body).then(function(ninja){
-        Ninja.findOne({_id: req.params.id}).then(function(ninja){
+router.put('/ninjas/:id', function (req, res, next) {
+
+    Ninja.findByIdAndUpdate({ _id: req.params.id }, req.body).then(function (ninja) {
+        Ninja.findOne({ _id: req.params.id }).then(function (ninja) {
             res.send(ninja);
         });
-        
+
     });
 });
 
@@ -129,12 +145,12 @@ router.put('/ninjas/:id', function(req,res,next){
  */
 
 
-router.delete('/ninjas/:id', function(req,res,next){
-    Ninja.findByIdAndRemove({_id: req.params.id}).then(function(ninja){
+router.delete('/ninjas/:id', function (req, res, next) {
+    Ninja.findByIdAndRemove({ _id: req.params.id }).then(function (ninja) {
         res.send(ninja);
     });
 
     // res.send({type: 'DELETE'});
-}); 
+});
 
 module.exports = router;

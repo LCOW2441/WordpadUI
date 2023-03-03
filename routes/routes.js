@@ -1,5 +1,7 @@
-const express = require ('express');
+const express = require('express');
 const router = express.Router();
+const session = require('express-session');
+
 
 const Note = require('../notes');
 
@@ -12,10 +14,11 @@ const Note = require('../notes');
  *              properties:
  *                  id:
  *                      type: string
- *                  userid:
- *                      type: string
  *                  title:
  *                      type: string
+ *                  content:
+ *                      type: string
+ * 
  *                  
  *                  
  *                 
@@ -31,22 +34,38 @@ const Note = require('../notes');
  *      summary: This API for viewing notes
  *      description: This API for viewing notes
  *      responses:
- *            200:
- *                description: To view notes
- *                content: 
- *                   application/json:
+ *          200:
+ *              description: To view notes
+ *              content: 
+ *                  application/json:
  *                      schema:
  *                          type: array
  *                          items:
  *                              $ref: '#components/schemas/Notes'
+ *          401:
+ *              description: Please Log In First
+ *              
  */
 
 
 
 
-router.post ("/list", async function(req,res){
-    var notes = await Note.find();
-    res.json(notes);
+router.post("/list", async function (req, res) {
+    const sessionData = req.session;
+        if (!sessionData.token) {
+            
+            return res.status(401).send("Please Log In First")
+            
+
+        }
+        else{
+        console.log(sessionData.userId)
+        Note.find({ author: sessionData.userId })
+            .then(document => {
+                return res.send(document)
+            })
+            .catch(err => { return res.send(err) })
+        }
 });
 
 
@@ -63,30 +82,36 @@ router.post ("/list", async function(req,res){
  *                  schema:
  *                       $ref: '#components/schemas/Notes'
  *      responses:
- *            200:
- *                description: Note Created
+ *          200:
+ *              description: Note Created
  *                
  */
 
-router.post ("/add", async function(req,res){
-    
-    // await Note.deleteOne({ id: req.body.id });
+router.post("/add", async function (req, res) {
 
-    const newNote = new Note({
-        id: req.body.id,
-        userid: req.body.userid,
-        title: req.body.title
-    });
-    await newNote.save()
-    .then(note =>{
-        return res.json({message : "Note Created"})
-    })
-    .catch(err => {
-        return res.json({message : err.message})
-    }); 
+    const sessionData = req.session;
+    if (!sessionData.userId) {
+        return res.redirect('/login');
+    }
+    else {
 
-   
-    
+        const newNote = new Note({
+            id: req.body.id,
+            username: sessionData.userName,
+            title: req.body.title,
+            content: req.body.content,
+            author: sessionData.userId
+        });
+        await newNote.save()
+            .then(note => {
+                return res.json({ message: "Note Created" })
+            })
+            .catch(err => {
+                return res.json({ message: err.message })
+            });
+    }
+
+
 });
 
 /**
@@ -103,31 +128,39 @@ router.post ("/add", async function(req,res){
  *                  schema:
  *                       $ref: '#components/schemas/Notes'
  *      responses:
- *            200:
- *                description: Note Updated
- *                content: 
- *                   application/json:
+ *          200:
+ *              description: Note Updated
+ *              content: 
+ *                  application/json:
  *                      schema:
  *                          type: array
  *                          items:
  *                              $ref: '#components/schemas/Notes'
+ *          401:
+ *              description: Please Log In First
  *                
  */
 
 
-router.put ("/update", function(req,res){
-    console.log(req.body)
-    Note.findOne({id:req.body.id})
-    .then(async note=> {
-        console.log(note)
-    note.title = req.body.title || note.title
-    await note.save();
-    })
-    .catch(err=>{res.send("error")})
+router.put("/update", function (req, res) {
+    const sessionData = req.session;
+    if (sessionData.userId) {
 
-   
-    const resp= {message : "Note Updated"};
-    res.json(resp);
+        console.log(req.body)
+        Note.findOne({ $and: [{ id: req.body.id }, { author: sessionData.userId }] })
+            .then(async note => {
+                console.log(note)
+                note.title = req.body.title || note.title
+                await note.save();
+                const resp = { message: "Note Updated" };
+                res.json(resp);
+            })
+            .catch(err => { res.send("Note doesn't exist") })
+    }
+    else {
+        res.status(401).send("Login First");
+    }
+
 });
 
 
@@ -144,16 +177,27 @@ router.put ("/update", function(req,res){
  *                  schema:
  *                       $ref: '#components/schemas/Notes'
  *      responses:
- *            200:
- *                description: Note Deleted
+ *          200:
+ *              description: Note Deleted
+ *          401:
+ *              description: Please Log In First
  */
 
-router.delete ("/delete", async function(req,res){
-    await Note.deleteOne({ id: req.body.id });
-
-    const resp= {message : "Note Deleted"};
-    res.json(resp);
-
+router.delete("/delete", async function (req, res) {
+    const sessionData = req.session;
+    if (sessionData.userId) {
+         Note.findOne({ $and: [{ id: req.body.id }, { author: sessionData.userId }] })
+            .then(async note => {
+                console.log(note)
+                note.deleteOne({ $and: [{ id: req.body.id }, { author: sessionData.userId }] });
+                const resp = { message: "Note Updated" };
+                res.json(resp);
+            })
+            .catch(err => { res.send("Note doesn't exist") })
+    }
+    else {
+        res.status(401).send("Login First");
+    }
 });
 
 module.exports = router;
