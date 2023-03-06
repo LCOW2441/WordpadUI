@@ -10,10 +10,6 @@ const noteSchema = mongoose.Schema({
     username: {
         type: String
         },
-    title: {
-        type: String,
-        required:true
-    },
     content: {
         type: String
     },

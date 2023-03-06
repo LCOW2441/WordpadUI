@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const session = require('express-session');
+const jwt = require("jsonwebtoken")
 
 
 const Note = require('../notes');
@@ -13,8 +14,6 @@ const Note = require('../notes');
  *              type: object
  *              properties:
  *                  id:
- *                      type: string
- *                  title:
  *                      type: string
  *                  content:
  *                      type: string
@@ -52,20 +51,34 @@ const Note = require('../notes');
 
 router.post("/list", async function (req, res) {
     const sessionData = req.session;
-        if (!sessionData.token) {
-            
-            return res.status(401).send("Please Log In First")
-            
+    const token = req.headers.token
+    if (!token) {
 
-        }
-        else{
-        console.log(sessionData.userId)
-        Note.find({ author: sessionData.userId })
-            .then(document => {
-                return res.send(document)
-            })
-            .catch(err => { return res.send(err) })
-        }
+        return res.status(401).send("Please Log In First")
+
+    }
+    else {
+
+        jwt.verify(token, "Sktchie", (err, tokenData)=>{
+            if(err){
+                return res.send("Invalid Token")
+            }
+            else{
+                if (tokenData.userId != sessionData.userId) {
+                    return res.send("Bad Request")
+                }
+                else {
+                    Note.find({ author: sessionData.userId })
+                        .then(document => {
+                            return res.send(document)
+                        })
+                        .catch(err => { return res.send(err) })
+                }
+            }
+        });
+
+
+    }
 });
 
 
@@ -98,7 +111,6 @@ router.post("/add", async function (req, res) {
         const newNote = new Note({
             id: req.body.id,
             username: sessionData.userName,
-            title: req.body.title,
             content: req.body.content,
             author: sessionData.userId
         });
@@ -150,7 +162,7 @@ router.put("/update", function (req, res) {
         Note.findOne({ $and: [{ id: req.body.id }, { author: sessionData.userId }] })
             .then(async note => {
                 console.log(note)
-                note.title = req.body.title || note.title
+                note.content = req.body.content || note.content
                 await note.save();
                 const resp = { message: "Note Updated" };
                 res.json(resp);
@@ -186,7 +198,7 @@ router.put("/update", function (req, res) {
 router.delete("/delete", async function (req, res) {
     const sessionData = req.session;
     if (sessionData.userId) {
-         Note.findOne({ $and: [{ id: req.body.id }, { author: sessionData.userId }] })
+        Note.findOne({ $and: [{ id: req.body.id }, { author: sessionData.userId }] })
             .then(async note => {
                 console.log(note)
                 note.deleteOne({ $and: [{ id: req.body.id }, { author: sessionData.userId }] });
