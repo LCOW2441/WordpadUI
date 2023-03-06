@@ -131,6 +131,9 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
         sessionData.userId = user._id;
         sessionData.userName = user.name;
 
+        console.log("Log in success");
+        console.log(`User ID : ${user._id}`);
+
         res.json({ token });
 
     });
