@@ -98,17 +98,17 @@ router.get("/list", async function (req, res) {
 
 router.post("/add", async function (req, res) {
     
-    const sessionData = req.session;
-    if (!sessionData.userId) {
+    const reqToken = req.headers.token
+    if (!reqToken) {
         return res.redirect('/login');
     }
     else {
-
+        const tokenData = jwt.verify(reqToken, "Sktchie")
         const newNote = new Note({
             id: req.body.id,
-            username: sessionData.userName,
+            username: tokenData.userName,
             content: req.body.content,
-            author: sessionData.userId
+            author: tokenData.userId
         });
         await newNote.save()
             .then(note => {
