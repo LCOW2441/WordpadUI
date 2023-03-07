@@ -140,49 +140,51 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
         // Generate a JWT and send it as a response
         const token = jwt.sign({ userId: user._id }, JWT_SECRET);
         res.cookie('token', token, { httpOnly: true });
-        const sessionData = req.session;
-        sessionData.token = token;
-        sessionData.userId = user._id;
-        sessionData.userName = user.name;
-        console.log(req.session)
 
-        console.log("Log in success");
-        console.log(`User ID : ${user._id}`);
+        user.token = token;
+        user.save();
 
-        res.json({ token });
+        res.json({ token: token, message: "Login success" });
 
     });
 
     /**
-   *  @swagger
-   * /logout:
-   *  post:
-   *      summary: This API for logging out
-   *      description: This API for logging out
-   *      responses:
-   *            200:
-   *                description: Logout Successful
-   *                
-   */
-    app.post('/logout', (req, res) => {
+     *  @swagger
+     * /logout/{token}:
+     *  get:
+     *      summary: This API for logout
+     *      description: This API for logout
+     *      parameters:
+     *          - in: path
+     *            name: token
+     *            required: true
+     *            description: Token required
+     *            schema:
+     *              type: string
+     *      responses:
+     *            200:
+     *                description: User Deleted
+     */
+    app.get('/logout/:token', (req, res) => {
 
-        const sessionData = req.session;
-        if (!sessionData.token) {
+        const reqToken = req.params.token;
+
+        console.log(reqToken)
+        if (!reqToken) {
             res.send('Login First');
-
         }
         else {
-            // Clear the token from the client's cookies or localStorage
-            // res.clearCookie('token');
-            // delete req.session.token;
-            // delete req.session.userId;
-            // delete req.session.userName;
-            req.session.destroy();
-            res.redirect('/');
+            const tokenData = jwt.verify(reqToken, "Sktchie")
 
+            Ninja.findById(tokenData.userId)
+                .then(user => {
+                    user.token = ""
+                    user.save()
 
+                    res.status(200).send('Logout successful');
+                })
+                .catch(err => { return res.send(err) })
             // Send a success response
-            res.status(200).send('Logout successful');
         }
 
 

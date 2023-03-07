@@ -79,7 +79,7 @@ router.post('/ninjas', async function (req, res, next) {
             password: await bcrypt.hash(req.body.password, 10)
         })
         ninja.save().then(function (ninja) {
-            res.send("User created");
+            res.json({message: "User created"});
         }).catch(next);
     }
         

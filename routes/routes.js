@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken")
 
 
 const Note = require('../notes');
+const Ninja = require("../models/ninja")
 
 /**
  * @swagger
@@ -28,10 +29,17 @@ const Note = require('../notes');
 
 /**
  *  @swagger
- * /notes/list:
- *  post:
+ * /notes/list/{token}:
+ *  get:
  *      summary: This API for viewing notes
  *      description: This API for viewing notes
+ *      parameters:
+ *          - in: path
+ *            name: token
+ *            required: true
+ *            description: ID required
+ *            schema:
+ *              type: string
  *      responses:
  *          200:
  *              description: To view notes
@@ -45,41 +53,27 @@ const Note = require('../notes');
  *              description: Please Log In First
  *              
  */
+router.get("/list/:token", async function (req, res) {
+    const reqToken = req.params.token
 
-
-
-
-router.post("/list", async function (req, res) {
-    const sessionData = req.session;
-    const token = req.headers.token
-    if (!token) {
-
-        return res.status(401).send("Please Log In First")
-
+    if (!reqToken) {
+        return res.send("Please Log In First")
     }
     else {
+        const tokenData = jwt.verify(reqToken, "Sktchie")
+        console.log(tokenData)
 
-        jwt.verify(token, "Sktchie", (err, tokenData)=>{
-            if(err){
-                return res.send("Invalid Token")
-            }
-            else{
-                console.log(sessionData)
-                console.log(tokenData.userId +" <==> "+sessionData.userId);
-                if (tokenData.userId != sessionData.userId) {
-                    return res.send({msg : "Bad Request", token: tokenData.userId, session: sessionData.userId});
-                }
-                else {
-                    Note.find({ author: sessionData.userId })
-                        .then(document => {
-                            return res.send(document)
-                        })
-                        .catch(err => { return res.send(err) })
-                }
-            }
-        });
-
-
+        let user = await Ninja.findOne({ $and: [{ token: reqToken }, { _id: tokenData.userId }] });
+        if (user) {
+            Note.find({ author: user._id })
+                .then(notes => {
+                    return res.send(notes)
+                })
+                .catch(err => { return res.send(err) })
+        }
+        else {
+            return res.send("Login First")
+        }
     }
 });
 
