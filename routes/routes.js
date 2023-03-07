@@ -97,7 +97,7 @@ router.get("/list", async function (req, res) {
  */
 
 router.post("/add", async function (req, res) {
-
+    
     const sessionData = req.session;
     if (!sessionData.userId) {
         return res.redirect('/login');
@@ -151,11 +151,12 @@ router.post("/add", async function (req, res) {
 
 
 router.put("/update", function (req, res) {
-    const sessionData = req.session;
-    if (sessionData.userId) {
-
+    const reqToken = req.headers.token
+    if (reqToken) {
+        const tokenData = jwt.verify(reqToken, "Sktchie")
+        console.log(tokenData)
         console.log(req.body)
-        Note.findOne({ $and: [{ id: req.body.id }, { author: sessionData.userId }] })
+        Note.findOne({ $and: [{ id: req.body.id }, { author: tokenData.userId }] })
             .then(async note => {
                 console.log(note)
                 note.content = req.body.content || note.content
@@ -192,12 +193,14 @@ router.put("/update", function (req, res) {
  */
 
 router.delete("/delete", async function (req, res) {
-    const sessionData = req.session;
-    if (sessionData.userId) {
-        Note.findOne({ $and: [{ id: req.body.id }, { author: sessionData.userId }] })
+    const reqToken = req.headers.token
+    if (reqToken) {
+        const tokenData = jwt.verify(reqToken, "Sktchie")
+
+        Note.findOne({ $and: [{ id: req.body.id }, { author: tokenData.userId }] })
             .then(async note => {
                 console.log(note)
-                note.deleteOne({ $and: [{ id: req.body.id }, { author: sessionData.userId }] });
+                note.deleteOne({ $and: [{ id: req.body.id }, { author: tokenData.userId }] });
                 const resp = { message: "Note Updated" };
                 res.json(resp);
             })
