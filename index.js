@@ -167,7 +167,7 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
      */
     app.get('/logout/:token', (req, res) => {
 
-        const reqToken = req.params.token;
+        const reqToken = req.headers.token;
 
         console.log(reqToken)
         if (!reqToken) {

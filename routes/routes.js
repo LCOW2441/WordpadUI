@@ -54,8 +54,8 @@ const Ninja = require("../models/ninja")
  *              
  */
 router.get("/list/:token", async function (req, res) {
-    const reqToken = req.params.token
-
+    const reqToken = req.headers.token
+    console.log(reqToken)
     if (!reqToken) {
         return res.send("Please Log In First")
     }
