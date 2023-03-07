@@ -150,7 +150,7 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
 
     /**
      *  @swagger
-     * /logout/{token}:
+     * /logout:
      *  get:
      *      summary: This API for logout
      *      description: This API for logout
@@ -165,7 +165,7 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
      *            200:
      *                description: User Deleted
      */
-    app.get('/logout/:token', (req, res) => {
+    app.get('/logout', (req, res) => {
 
         const reqToken = req.headers.token;
 

@@ -29,7 +29,7 @@ const Ninja = require("../models/ninja")
 
 /**
  *  @swagger
- * /notes/list/{token}:
+ * /notes/list:
  *  get:
  *      summary: This API for viewing notes
  *      description: This API for viewing notes
@@ -53,7 +53,7 @@ const Ninja = require("../models/ninja")
  *              description: Please Log In First
  *              
  */
-router.get("/list/:token", async function (req, res) {
+router.get("/list", async function (req, res) {
     const reqToken = req.headers.token
     console.log(reqToken)
     if (!reqToken) {
