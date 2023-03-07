@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cookieParser = require("cookie-parser");
 const session = require('express-session');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -20,8 +21,18 @@ const app = express();
 app.use(session({
     secret: 'Sktchie',
     resave: false,
-    saveUninitialized: true
-  }));
+    saveUninitialized: true,
+    // store: sessionStore,
+    cookie: {
+        sameSite: true,
+        httpOnly: true,
+        secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        sameSite: 'none'
+    },
+}));
+
+app.set('trust proxy', 1)
 
 const swaggerJSDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
@@ -77,16 +88,16 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
 
 
 
- /**
- *  @swagger
- * /:
- *  get:
- *      summary: This API for Home page
- *      description: This API for Home page
- *      responses:
- *            200:
- *                description: To test GET method
- */
+    /**
+    *  @swagger
+    * /:
+    *  get:
+    *      summary: This API for Home page
+    *      description: This API for Home page
+    *      responses:
+    *            200:
+    *                description: To test GET method
+    */
 
     app.get("/", function (req, res) {
         res.send("Home");
@@ -110,8 +121,11 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
  *                description: Login Successful
  *                
  */
+
+    app.use(cookieParser());
+
     app.post("/login", async function (req, res) {
-        const {email, password } = req.body;
+        const { email, password } = req.body;
         const user = await Ninja.findOne({ email });
         if (!user) {
             return res.status(401).send('Invalid email or password');
@@ -125,11 +139,12 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
 
         // Generate a JWT and send it as a response
         const token = jwt.sign({ userId: user._id }, JWT_SECRET);
-        res.cookie('token',token, {httpOnly: true});
+        res.cookie('token', token, { httpOnly: true });
         const sessionData = req.session;
         sessionData.token = token;
         sessionData.userId = user._id;
         sessionData.userName = user.name;
+        console.log(req.session)
 
         console.log("Log in success");
         console.log(`User ID : ${user._id}`);
@@ -138,39 +153,41 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
 
     });
 
-  /**
- *  @swagger
- * /logout:
- *  post:
- *      summary: This API for logging out
- *      description: This API for logging out
- *      responses:
- *            200:
- *                description: Logout Successful
- *                
- */
+    /**
+   *  @swagger
+   * /logout:
+   *  post:
+   *      summary: This API for logging out
+   *      description: This API for logging out
+   *      responses:
+   *            200:
+   *                description: Logout Successful
+   *                
+   */
     app.post('/logout', (req, res) => {
 
         const sessionData = req.session;
         if (!sessionData.token) {
             res.send('Login First');
-            
+
         }
-        else{
-             // Clear the token from the client's cookies or localStorage
-        res.clearCookie('token');
-        delete req.session.token;
-        delete req.session.userId;
-        delete req.session.userName;
+        else {
+            // Clear the token from the client's cookies or localStorage
+            // res.clearCookie('token');
+            // delete req.session.token;
+            // delete req.session.userId;
+            // delete req.session.userName;
+            req.session.destroy();
+            res.redirect('/');
 
 
-        // Send a success response
-        res.status(200).send('Logout successful');
+            // Send a success response
+            res.status(200).send('Logout successful');
         }
 
 
-       
-      });
+
+    });
 
 
 

@@ -64,6 +64,7 @@ router.post("/list", async function (req, res) {
                 return res.send("Invalid Token")
             }
             else{
+                console.log(sessionData)
                 console.log(tokenData.userId +" <==> "+sessionData.userId);
                 if (tokenData.userId != sessionData.userId) {
                     return res.send({msg : "Bad Request", token: tokenData.userId, session: sessionData.userId});
