@@ -97,29 +97,33 @@ router.get("/list", async function (req, res) {
  */
 
 router.post("/add", async function (req, res) {
-    
+
     const reqToken = req.headers.token
     if (!reqToken) {
-        return res.redirect('/login');
+        return res.send({ message: "Login First" });
     }
     else {
         const tokenData = jwt.verify(reqToken, "Sktchie")
-        const newNote = new Note({
-            id: req.body.id,
-            username: tokenData.userName,
-            content: req.body.content,
-            author: tokenData.userId
-        });
-        await newNote.save()
-            .then(note => {
-                return res.json({ message: "Note Created" })
+
+        Ninja.findById(tokenData.userId)
+            .then(async user => {
+                console.log(user)
+                const newNote = new Note({
+                    id: req.body.id,
+                    username: user.name,
+                    content: req.body.content,
+                    author: tokenData.userId
+                });
+                await newNote.save()
+                    .then(note => {
+                        return res.json({ message: "Note Created", note: note })
+                    })
+                    .catch(err => {
+                        return res.json({ message: err.message })
+                    });
             })
-            .catch(err => {
-                return res.json({ message: err.message })
-            });
+            .catch(err => { return res.send(err) })
     }
-
-
 });
 
 /**
