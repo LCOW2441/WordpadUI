@@ -103,7 +103,17 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
         res.send("Home");
     });
 
-
+/**
+    *  @swagger
+    * /anonuser:
+    *  get:
+    *      summary: This API for Home page and creation of anonymous user
+    *      description: This API for Home page and creation of anonymous user
+    *      responses:
+    *            200:
+    *                description: To test GET method
+    */
+   
     app.get("/anonuser", function (req, res) {
         
             const ninja = new Ninja({
