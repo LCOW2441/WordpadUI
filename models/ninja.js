@@ -10,15 +10,13 @@ const NinjaSchema = new Schema({
     },
     email: {
         type: String,
-        required: true,
         unique: true
     },
     password: {
-        type: String,
-        required: true
+        type: String
     },
     token: {
-        type: String,
+        type: String
     }
     
 })

@@ -104,6 +104,32 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
     });
 
 
+    app.get("/anonuser", function (req, res) {
+        
+            const ninja = new Ninja({
+                name: "anonymous"
+            })
+            ninja.save().then(function (ninja) {
+                const token = jwt.sign({ userId: ninja._id }, JWT_SECRET);
+                res.send({message: "Anonymous User Created", token: token})
+
+            }).catch(next);
+        
+            
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
  *  @swagger
  * /login:
