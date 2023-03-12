@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const cookieParser = require("cookie-parser");
 const session = require('express-session');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const Ninja = require('./models/ninja');
 const Notes = require('./notes');
 

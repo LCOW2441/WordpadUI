@@ -62,7 +62,7 @@ router.get('/ninjas', async function (req, res, next) {
  *                description: User Created
  *                
  */
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 router.post('/ninjas', async function (req, res, next) {
 
     const { email } = req.body;
