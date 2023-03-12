@@ -49,7 +49,7 @@ const options = {
                 url: 'http://localhost:4000/'
             },
             {
-                url: 'http://18.234.225.252:4000/'
+                url: 'http://54.146.74.146/:4000/'
             }
         ]
     },
