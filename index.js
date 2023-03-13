@@ -122,6 +122,8 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
             })
             ninja.save().then(function (ninja) {
                 const token = jwt.sign({ userId: ninja._id }, JWT_SECRET);
+                ninja.token = token;
+                ninja.save();
                 res.send({message: "Anonymous User Created", token: token})
 
             }).catch(err => {
