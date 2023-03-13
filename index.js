@@ -117,8 +117,7 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
     app.get("/anonuser", function (req, res) {
         
             const ninja = new Ninja({
-                name: "anonymous",
-                email: "abc@abc.com"
+                name: "anonymous"
             })
             ninja.save().then(function (ninja) {
                 const token = jwt.sign({ userId: ninja._id }, JWT_SECRET);
