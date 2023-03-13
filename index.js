@@ -125,7 +125,7 @@ mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/
                 res.send({message: "Anonymous User Created", token: token})
 
             }).catch(err => {
-                return res.send(err)
+                return res.send({err: err, msg : err.message})
             });
         
             
