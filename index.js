@@ -76,6 +76,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json())
 
+app.use((req, res, next)=>{
+    res.header("Access-Control-Allow-Origin", "*")
+    next()
+})
+
 
 mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`).then(function () {
 
