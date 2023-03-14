@@ -103,7 +103,7 @@ router.get("/list", async function (req, res) {
  *              description: Please Log In First
  *              
  */
-app.get("/note/:id", (req, res) => {
+router.get("/note/:id", (req, res) => {
     const reqToken = req.headers.token
     console.log(reqToken)
     if (!reqToken) {
