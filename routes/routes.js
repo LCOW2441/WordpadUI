@@ -77,6 +77,52 @@ router.get("/list", async function (req, res) {
     }
 });
 
+/**
+ *  @swagger
+ * /notes/note/{id}:
+ *  get:
+ *      summary: This API to view specific note
+ *      description: This API to view specific note
+ *      parameters:
+ *          - in: path
+ *            name: token
+ *            required: true
+ *            description: ID required
+ *            schema:
+ *              type: string
+ *      responses:
+ *          200:
+ *              description: To view notes
+ *              content: 
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#components/schemas/Notes'
+ *          401:
+ *              description: Please Log In First
+ *              
+ */
+app.get("/note/:id", (req, res) => {
+    const reqToken = req.headers.token
+    console.log(reqToken)
+    if (!reqToken) {
+        return res.send("Please Log In First")
+    }
+    else {
+        const tokenData = jwt.verify(reqToken, "Sktchie")
+        console.log(tokenData)
+
+        const id = req.params.id
+        Note.findOne({ id: id })
+            .then(note => {
+                console.log(note)
+                return res.send({ note: note })
+            })
+            .catch(err => { return res.send(err.message) })
+    }
+})
+
 
 /**
  *  @swagger
