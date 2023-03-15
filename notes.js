@@ -1,4 +1,4 @@
-const mongoose = require ('mongoose');
+const mongoose = require('mongoose');
 
 
 const noteSchema = mongoose.Schema({
@@ -9,13 +9,19 @@ const noteSchema = mongoose.Schema({
     },
     username: {
         type: String
-        },
+    },
+    title: {
+        type: String
+    },
     content: {
+        type: String
+    },
+    editable: {
         type: String
     },
     dateadded: {
         type: Date,
-        default: Date.now, 
+        default: Date.now,
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
@@ -24,4 +30,4 @@ const noteSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model ("Note", noteSchema);
+module.exports = mongoose.model("Note", noteSchema);

@@ -158,7 +158,9 @@ router.post("/add", async function (req, res) {
                     id: req.body.id,
                     username: user.name,
                     content: req.body.content,
-                    author: tokenData.userId
+                    title: req.body.title,
+                    author: tokenData.userId,
+                    editable: req.body.editable
                 });
                 await newNote.save()
                     .then(note => {
@@ -210,6 +212,8 @@ router.put("/update", function (req, res) {
             .then(async note => {
                 console.log(note)
                 note.content = req.body.content || note.content
+                note.title = req.body.title || note.title
+                note.editable = req.body.editable || note.editable
                 await note.save();
                 const resp = { message: "Note Updated" };
                 res.json(resp);
