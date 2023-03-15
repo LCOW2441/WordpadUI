@@ -16,7 +16,11 @@ const Ninja = require("../models/ninja")
  *              properties:
  *                  id:
  *                      type: string
+ *                  title:
+ *                      type: string
  *                  content:
+ *                      type: string
+ *                  editable:
  *                      type: string
  * 
  *                  
