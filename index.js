@@ -45,7 +45,7 @@ app.use(session({
     },
 }));
 
-app.set('trust proxy', 1)
+// app.set('trust proxy', 1)
 
 const swaggerJSDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
