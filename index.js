@@ -87,10 +87,10 @@ app.use(bodyParser.json())
 // next()
 // })
 
-// app.use((req, res, next)=>{
-//     res.header("Access-Control-Allow-Origin", "*")
-//     next()
-// })
+app.use((req, res, next)=>{
+    res.header("Access-Control-Allow-Origin", "*")
+    next()
+})
 
 
 mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`).then(function () {
