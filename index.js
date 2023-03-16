@@ -1,5 +1,7 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors')
+
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cookieParser = require("cookie-parser");
@@ -17,6 +19,8 @@ const JWT_SECRET = 'Sktchie';
 mongoose.set('strictQuery', false);
 const Note = require("./notes");
 const app = express();
+app.use(cors())
+
 
 
 // app.use((req, res, next)=>{  
@@ -87,10 +91,10 @@ app.use(bodyParser.json())
 // next()
 // })
 
-app.use((req, res, next)=>{
-    res.header("Access-Control-Allow-Origin", "*")
-    next()
-})
+// app.use((req, res, next)=>{
+//     res.header("Access-Control-Allow-Origin", "*")
+//     next()
+// })
 
 
 mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`).then(function () {
