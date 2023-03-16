@@ -78,10 +78,9 @@ app.use(bodyParser.json())
 
 
 
-
+app.use((req, res, next)=>{
 let allowedOrigins = ["http://localhost:3000/","http://localhost:4000","http://34.232.69.171:4000"]
 let origin = req.headers.origin;
-app.use((req, res, next)=>{
 if(allowedOrigins.includes(origin)){
     res.header("Access-Control-Allow-Origin", origin)
 }
