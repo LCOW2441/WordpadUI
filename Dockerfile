@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 4000
 
 # Start the application
-CMD ["node", "index.js"]
+CMD ["pm2", "index.js"]
