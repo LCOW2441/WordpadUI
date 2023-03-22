@@ -212,7 +212,7 @@ router.put("/update", function (req, res) {
         const tokenData = jwt.verify(reqToken, "Sktchie")
         console.log(tokenData)
         console.log(req.body)
-        Note.findOne({ $and: [{ id: req.body.id }, { author: tokenData.userId }] })
+        Note.findOne({ id: req.body.id })
             .then(async note => {
                 console.log(note)
                 note.content = req.body.content || note.content
