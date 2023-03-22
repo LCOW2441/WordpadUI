@@ -82,19 +82,6 @@ app.use(bodyParser.json())
 
 
 
-// app.use((req, res, next)=>{
-// let allowedOrigins = ["http://localhost:3000/","http://localhost:4000","http://34.232.69.171:4000"]
-// let origin = req.headers.origin;
-// if(allowedOrigins.includes(origin)){
-//     res.header("Access-Control-Allow-Origin", origin)
-// }
-// next()
-// })
-
-// app.use((req, res, next)=>{
-//     res.header("Access-Control-Allow-Origin", "*")
-//     next()
-// })
 
 
 mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`).then(function () {
