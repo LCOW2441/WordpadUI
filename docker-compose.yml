@@ -12,13 +12,13 @@ services:
       - 4000:4000
     depends_on:
       - mongo
-  mongo:
-    image: mongo:latest
-    restart: always
-    volumes:
-      - mongo:/data/db
-    ports:
-      - 27017:27017
+#   mongo:
+#     image: mongo:latest
+#     restart: always
+#     volumes:
+#       - mongo:/data/db
+#     ports:
+#       - 27017:27017
 
-volumes:
-  mongo: {}
+# volumes:
+#   mongo: {}
