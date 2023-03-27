@@ -82,8 +82,6 @@ app.use(bodyParser.json())
 
 
 
-
-
 mongoose.connect(`mongodb+srv://palakv213:Hatata213@cluster0.soo1euv.mongodb.net/?retryWrites=true&w=majority`).then(function () {
 
     /**
@@ -255,7 +253,7 @@ mongoose.connect(`mongodb+srv://palakv213:Hatata213@cluster0.soo1euv.mongodb.net
 
 
 
-    
+
     app.use('/api', require("./routes/api"));
 
 
