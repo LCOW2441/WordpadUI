@@ -80,7 +80,9 @@ router.post('/ninjas', async function (req, res, next) {
         })
         ninja.save().then(function (ninja) {
             res.json({message: "User created"});
-        }).catch(next);
+        }).catch(err => {
+            return res.json({ message: err.message })}
+            );
     }
         
 });
