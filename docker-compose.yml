@@ -3,15 +3,15 @@ services:
   web:
     image: wordpad-app-image
     build: .
-    environment:
-      MONGO_HOST: mongo
-      MONGO_PORT: 27017
-      MONGO_DB: userdetails
+    # environment:
+    #   MONGO_HOST: mongo
+    #   MONGO_PORT: 27017
+    #   MONGO_DB: userdetails
     command: "node index.js"
     ports:
       - 4000:4000
-    depends_on:
-      - mongo
+    # depends_on:
+    #   - mongo
 #   mongo:
 #     image: mongo:latest
 #     restart: always
