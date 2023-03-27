@@ -84,7 +84,7 @@ app.use(bodyParser.json())
 
 
 
-mongoose.connect(`mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`).then(function () {
+mongoose.connect(`mongodb+srv://palakv213:Hatata213@cluster0.soo1euv.mongodb.net/?retryWrites=true&w=majority`).then(function () {
 
     /**
  * @swagger
