@@ -118,6 +118,7 @@ mongoose.connect(`mongodb+srv://palakv213:Hatata213@cluster0.soo1euv.mongodb.net
     */
 
     app.get("/", function (req, res) {
+        console.log("blahhhhhh");
         res.send("Home");
     });
 
