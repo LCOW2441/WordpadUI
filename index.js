@@ -269,6 +269,11 @@ app.use(function (err, req, res, next) {
 });
 
 
-app.listen(process.env.port || 4000, function () {
-    console.log('starting');
+const PORT = process.env.PORT || 8081;
+app.listen(PORT, () => { 
+ console.log(`server started on port ${PORT}`);
 });
+
+// app.listen(process.env.port || 4000, function () {
+//     console.log('starting');
+// });
