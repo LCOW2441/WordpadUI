@@ -41,6 +41,7 @@ const Ninja = require('../models/ninja');
 
 
 router.get('/ninjas', async function (req, res, next) {
+    console.log("Ninja Called")
     var user = await Ninja.find();
     res.json(user);
 });
