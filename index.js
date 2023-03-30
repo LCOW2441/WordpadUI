@@ -86,7 +86,9 @@ app.use(bodyParser.json())
 
 
 mongoose.connect(`mongodb+srv://palakv213:Hatata213@cluster0.soo1euv.mongodb.net/?retryWrites=true&w=majority`)
-
+const db = mongoose.connection
+db.on("error", (err) => console.error(err))
+db.once("open", () => console.log("Connected to database !"))
 /**
 * @swagger
 *  components:
