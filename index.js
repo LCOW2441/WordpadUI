@@ -85,77 +85,75 @@ app.use(bodyParser.json())
 
 
 
-mongoose.connect(`mongodb+srv://palakv213:Hatata213@cluster0.soo1euv.mongodb.net/?retryWrites=true&w=majority`).then(function () {
+mongoose.connect(`mongodb+srv://palakv213:Hatata213@cluster0.soo1euv.mongodb.net/?retryWrites=true&w=majority`)
 
-    /**
- * @swagger
- *  components:
- *      schemas:
- *          Login:
- *              type: object
- *              properties:
- *                  email:
- *                      type: string
- *                  password:
- *                      type: string
- *                  
- *                 
- */
-
-
+/**
+* @swagger
+*  components:
+*      schemas:
+*          Login:
+*              type: object
+*              properties:
+*                  email:
+*                      type: string
+*                  password:
+*                      type: string
+*                  
+*                 
+*/
 
 
 
 
 
 
-    /**
+
+
+/**
+*  @swagger
+* /:
+*  get:
+*      summary: This API for Home page
+*      description: This API for Home page
+*      responses:
+*            200:
+*                description: To test GET method
+*/
+
+app.get("/", function (req, res) {
+    console.log("blahhhhhh");
+    res.send("Home");
+});
+
+/**
     *  @swagger
-    * /:
+    * /anonuser:
     *  get:
-    *      summary: This API for Home page
-    *      description: This API for Home page
+    *      summary: This API for Home page and creation of anonymous user
+    *      description: This API for Home page and creation of anonymous user
     *      responses:
     *            200:
     *                description: To test GET method
     */
 
-    app.get("/", function (req, res) {
-        console.log("blahhhhhh");
-        res.send("Home");
-    });
+app.get("/anonuser", function (req, res) {
 
-    /**
-        *  @swagger
-        * /anonuser:
-        *  get:
-        *      summary: This API for Home page and creation of anonymous user
-        *      description: This API for Home page and creation of anonymous user
-        *      responses:
-        *            200:
-        *                description: To test GET method
-        */
+    const ninja = new Ninja({
+        name: "anonymous",
+        email: "abc" + Math.random() + "@abc.com"
+    })
+    ninja.save().then(function (ninja) {
+        const token = jwt.sign({ userId: ninja._id }, JWT_SECRET);
+        ninja.token = token;
+        ninja.save();
+        res.send({ message: "Anonymous User Created", token: token })
 
-    app.get("/anonuser", function (req, res) {
-
-        const ninja = new Ninja({
-            name: "anonymous",
-            email: "abc" + Math.random() + "@abc.com"
-        })
-        ninja.save().then(function (ninja) {
-            const token = jwt.sign({ userId: ninja._id }, JWT_SECRET);
-            ninja.token = token;
-            ninja.save();
-            res.send({ message: "Anonymous User Created", token: token })
-
-        }).catch(err => {
-            return res.send({ err: err, msg: err.message })
-        });
-
-
+    }).catch(err => {
+        return res.send({ err: err, msg: err.message })
     });
 
 
+});
 
 
 
@@ -167,110 +165,111 @@ mongoose.connect(`mongodb+srv://palakv213:Hatata213@cluster0.soo1euv.mongodb.net
 
 
 
-    /**
+
+
+/**
+*  @swagger
+* /login:
+*  post:
+*      summary: This API for logging in
+*      description: This API for logging in
+*      requestBody:
+*          required: true
+*          content: 
+*              application/json:
+*                  schema:
+*                       $ref: '#components/schemas/Login'
+*      responses:
+*            200:
+*                description: Login Successful
+*                
+*/
+
+app.use(cookieParser());
+
+app.post("/login", async function (req, res) {
+    const { email, password } = req.body;
+    const user = await Ninja.findOne({ email });
+    if (!user) {
+        return res.status(401).send('Invalid email or password');
+    }
+
+    // Compare the password with the stored hash
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+        return res.status(401).send('Invalid email or password');
+    }
+
+    // Generate a JWT and send it as a response
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+    res.cookie('token', token, { httpOnly: true });
+
+    user.token = token;
+    user.save();
+
+    res.json({ token: token, message: "Login success" });
+
+});
+
+/**
  *  @swagger
- * /login:
- *  post:
- *      summary: This API for logging in
- *      description: This API for logging in
- *      requestBody:
- *          required: true
- *          content: 
- *              application/json:
- *                  schema:
- *                       $ref: '#components/schemas/Login'
+ * /logout:
+ *  get:
+ *      summary: This API for logout
+ *      description: This API for logout
+ *      parameters:
+ *          - in: path
+ *            name: token
+ *            required: true
+ *            description: Token required
+ *            schema:
+ *              type: string
  *      responses:
  *            200:
- *                description: Login Successful
- *                
+ *                description: User Deleted
  */
+app.get('/logout', (req, res) => {
 
-    app.use(cookieParser());
+    const reqToken = req.headers.token;
 
-    app.post("/login", async function (req, res) {
-        const { email, password } = req.body;
-        const user = await Ninja.findOne({ email });
-        if (!user) {
-            return res.status(401).send('Invalid email or password');
-        }
+    console.log(reqToken)
+    if (!reqToken) {
+        res.send('Login First');
+    }
+    else {
+        const tokenData = jwt.verify(reqToken, "Sktchie")
 
-        // Compare the password with the stored hash
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) {
-            return res.status(401).send('Invalid email or password');
-        }
+        Ninja.findById(tokenData.userId)
+            .then(user => {
+                user.token = ""
+                user.save()
 
-        // Generate a JWT and send it as a response
-        const token = jwt.sign({ userId: user._id }, JWT_SECRET);
-        res.cookie('token', token, { httpOnly: true });
-
-        user.token = token;
-        user.save();
-
-        res.json({ token: token, message: "Login success" });
-
-    });
-
-    /**
-     *  @swagger
-     * /logout:
-     *  get:
-     *      summary: This API for logout
-     *      description: This API for logout
-     *      parameters:
-     *          - in: path
-     *            name: token
-     *            required: true
-     *            description: Token required
-     *            schema:
-     *              type: string
-     *      responses:
-     *            200:
-     *                description: User Deleted
-     */
-    app.get('/logout', (req, res) => {
-
-        const reqToken = req.headers.token;
-
-        console.log(reqToken)
-        if (!reqToken) {
-            res.send('Login First');
-        }
-        else {
-            const tokenData = jwt.verify(reqToken, "Sktchie")
-
-            Ninja.findById(tokenData.userId)
-                .then(user => {
-                    user.token = ""
-                    user.save()
-
-                    res.status(200).send('Logout successful');
-                })
-                .catch(err => { return res.send(err) })
-            // Send a success response
-        }
+                res.status(200).send('Logout successful');
+            })
+            .catch(err => { return res.send(err) })
+        // Send a success response
+    }
 
 
 
-    });
-
-
-
-
-
-    app.use('/api', require("./routes/api"));
-
-
-    const noteRouter = require("./routes/routes");
-    app.use("/notes", noteRouter);
 });
-mongoose.Promise = global.Promise
 
 
 
-app.get("/", (req, res)=>{
-    res.send({msg : "hello"});
-})
+
+
+app.use('/api', require("./routes/api"));
+
+
+const noteRouter = require("./routes/routes");
+app.use("/notes", noteRouter);
+
+
+
+
+// app.get("/", (req, res) => {
+//     res.send({ msg: "hello" });
+// })
 
 app.use(function (err, req, res, next) {
     res.status(422).send({ error: err.message });
