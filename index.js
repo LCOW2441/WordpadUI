@@ -281,3 +281,5 @@ app.listen(PORT, () => {
 // app.listen(process.env.port || 4000, function () {
 //     console.log('starting');
 // });
+
+module.exports = app
