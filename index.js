@@ -69,7 +69,7 @@ const options = {
                 url: 'http://34.232.69.171:4000/'
             },
             {
-                url : 'http://54.152.21.145:8080/'
+                url: 'http://54.152.21.145:8080/'
             }
         ]
     },
@@ -125,34 +125,34 @@ mongoose.connect(`mongodb+srv://palakv213:Hatata213@cluster0.soo1euv.mongodb.net
         res.send("Home");
     });
 
-/**
-    *  @swagger
-    * /anonuser:
-    *  get:
-    *      summary: This API for Home page and creation of anonymous user
-    *      description: This API for Home page and creation of anonymous user
-    *      responses:
-    *            200:
-    *                description: To test GET method
-    */
-   
-    app.get("/anonuser", function (req, res) {
-        
-            const ninja = new Ninja({
-                name: "anonymous",
-                email: "abc"+Math.random()+"@abc.com"
-            })
-            ninja.save().then(function (ninja) {
-                const token = jwt.sign({ userId: ninja._id }, JWT_SECRET);
-                ninja.token = token;
-                ninja.save();
-                res.send({message: "Anonymous User Created", token: token})
+    /**
+        *  @swagger
+        * /anonuser:
+        *  get:
+        *      summary: This API for Home page and creation of anonymous user
+        *      description: This API for Home page and creation of anonymous user
+        *      responses:
+        *            200:
+        *                description: To test GET method
+        */
 
-            }).catch(err => {
-                return res.send({err: err, msg : err.message})
-            });
-        
-            
+    app.get("/anonuser", function (req, res) {
+
+        const ninja = new Ninja({
+            name: "anonymous",
+            email: "abc" + Math.random() + "@abc.com"
+        })
+        ninja.save().then(function (ninja) {
+            const token = jwt.sign({ userId: ninja._id }, JWT_SECRET);
+            ninja.token = token;
+            ninja.save();
+            res.send({ message: "Anonymous User Created", token: token })
+
+        }).catch(err => {
+            return res.send({ err: err, msg: err.message })
+        });
+
+
     });
 
 
@@ -268,14 +268,18 @@ mongoose.Promise = global.Promise
 
 
 
+app.get("/", (req, res)=>{
+    res.send({msg : "hello"});
+})
+
 app.use(function (err, req, res, next) {
     res.status(422).send({ error: err.message });
 });
 
 
 const PORT = process.env.PORT || 80;
-app.listen(PORT, () => { 
- console.log(`server started on port ${PORT}`);
+app.listen(PORT, () => {
+    console.log(`server started on port ${PORT}`);
 });
 
 // app.listen(process.env.port || 4000, function () {
