@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors')
+const cors = require('cors');
+const rateLimit = require("express-rate-limit");
 
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -107,6 +108,10 @@ db.once("open", () => console.log("Connected to database !"))
 
 
 
+const limiter = rateLimit({
+    windowMs: 15*60*1000,
+    max: 10
+});
 
 
 
@@ -123,7 +128,7 @@ db.once("open", () => console.log("Connected to database !"))
 *                description: To test GET method
 */
 
-app.get("/", function (req, res) {
+app.get("/", limiter, function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
 });
@@ -270,6 +275,8 @@ app.use("/notes", noteRouter);
 app.use(function (err, req, res, next) {
     res.status(422).send({ error: err.message });
 });
+
+
 
 
 const PORT = process.env.PORT || 80;
