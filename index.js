@@ -109,7 +109,7 @@ db.once("open", () => console.log("Connected to database !"))
 
 
 const limiter = rateLimit({
-    windowMs: 15*60*1000,
+    windowMs: 1*60*1000,
     max: 10,
 });
 
@@ -128,7 +128,7 @@ const limiter = rateLimit({
 *                description: To test GET method
 */
 
-app.get("/", function (req, res) {
+app.get("/", limiter, function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
 });
