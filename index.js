@@ -127,8 +127,8 @@ const limiter = rateLimit({
 *            200:
 *                description: To test GET method
 */
-
-app.get("/", limiter, function (req, res) {
+app.use(limiter);
+app.get("/", function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
 });
