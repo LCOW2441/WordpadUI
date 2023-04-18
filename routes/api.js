@@ -71,7 +71,7 @@ router.post('/ninjas', async function (req, res, next) {
 
     const existingUser = await Ninja.findOne({ email });
     if (existingUser) {
-        return res.status(409).json({ error: 'Email already in use' });
+        return res.status(409).json({ message: 'Email already in use' });
     }
     else{   
         const ninja = new Ninja({
