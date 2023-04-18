@@ -153,7 +153,6 @@ router.delete('/ninjas/:id', function (req, res, next) {
         res.send(ninja);
     });
 
-    // res.send({type: 'DELETE'});
 });
 
 module.exports = router;
