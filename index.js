@@ -128,7 +128,7 @@ const limiter = rateLimit({
 *                description: To test GET method
 */
 
-app.get("/", limiter, function (req, res) {
+app.get("/", function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
 });
@@ -192,13 +192,13 @@ app.post("/login", async function (req, res) {
     const { email, password } = req.body;
     const user = await Ninja.findOne({ email });
     if (!user) {
-        return res.status(401).send('Invalid email or password');
+        return res.status(401).send({message:'Invalid email or password'});
     }
 
     // Compare the password with the stored hash
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-        return res.status(401).send('Invalid email or password');
+        return res.status(401).send({message:'Invalid email or password'});
     }
 
     // Generate a JWT and send it as a response
@@ -235,7 +235,7 @@ app.get('/logout', (req, res) => {
 
     console.log(reqToken)
     if (!reqToken) {
-        res.send('Login First');
+        res.send({message:'Login First'});
     }
     else {
         const tokenData = jwt.verify(reqToken, "Sktchie")
@@ -245,7 +245,7 @@ app.get('/logout', (req, res) => {
                 user.token = ""
                 user.save()
 
-                res.status(200).send('Logout successful');
+                res.status(200).send({message:'Logout successful'});
             })
             .catch(err => { return res.send(err) })
         // Send a success response

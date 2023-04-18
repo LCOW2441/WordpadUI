@@ -61,7 +61,7 @@ router.get("/list", async function (req, res) {
     const reqToken = req.headers.token
     console.log(reqToken)
     if (!reqToken) {
-        return res.send("Please Log In First")
+        return res.send({message:"Please Log In First"})
     }
     else {
         const tokenData = jwt.verify(reqToken, "Sktchie")
@@ -76,7 +76,7 @@ router.get("/list", async function (req, res) {
                 .catch(err => { return res.send(err) })
         }
         else {
-            return res.send("Login First")
+            return res.send({message:"Login First"})
         }
     }
 });
@@ -111,7 +111,7 @@ router.get("/note/:id", (req, res) => {
     const reqToken = req.headers.token
     console.log(reqToken)
     if (!reqToken) {
-        return res.send("Please Log In First")
+        return res.send({message:"Please Log In First"})
     }
     else {
         const tokenData = jwt.verify(reqToken, "Sktchie")
@@ -222,10 +222,10 @@ router.put("/update", function (req, res) {
                 const resp = { message: "Note Updated" };
                 res.json(resp);
             })
-            .catch(err => { res.send("Note doesn't exist") })
+            .catch(err => { res.send({message:"Note doesn't exist"}) })
     }
     else {
-        res.status(401).send("Login First");
+        res.status(401).send({message:"Login First"});
     }
 
 });
@@ -262,10 +262,10 @@ router.delete("/delete", async function (req, res) {
                 const resp = { message: "Note Updated" };
                 res.json(resp);
             })
-            .catch(err => { res.send("Note doesn't exist") })
+            .catch(err => { res.send({message:"Note doesn't exist"}) })
     }
     else {
-        res.status(401).send("Login First");
+        res.status(401).send({message:"Login First"});
     }
 });
 
