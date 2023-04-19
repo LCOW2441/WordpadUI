@@ -111,7 +111,9 @@ db.once("open", () => console.log("Connected to database !"))
 const limiter = rateLimit({
     windowMs: 1*60*1000,
     max: 10,
-    trustProxy: true,
+    // keyGenerator : (req,res) => {
+    //     return req.ip;
+    // },
 });
 
 
@@ -128,7 +130,7 @@ const limiter = rateLimit({
 *            200:
 *                description: To test GET method
 */
-// app.use(limiter);
+app.use(limiter);
 app.get("/", function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
