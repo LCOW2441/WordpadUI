@@ -133,7 +133,7 @@ app.use(rateLimit({
 *                description: To test GET method
 */
 // app.use(limiter);
-app.get("/",limiter, function (req, res) {
+app.get("/", function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
 });
