@@ -113,8 +113,8 @@ app.use(requestIp.mw());
 app.use(rateLimit({
     windowMs: 1*60*1000,
     max: 10,
-    keyGenerator : (req,res) => {
-        return req.ip;
+    keyGenerator : function(req) {
+        return req.headers["x-forwarded-for"] || req.connection.remoteAddress;
     },
 }));
 
