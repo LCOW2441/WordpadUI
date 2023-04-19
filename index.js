@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require("express-rate-limit");
+const requestIp = require('request-ip');
 
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -105,16 +106,17 @@ db.once("open", () => console.log("Connected to database !"))
 *                  
 *                 
 */
-app.enable('trust proxy');
+// app.enable('trust proxy');
 
+app.use(requestIp.mw());
 
-const limiter = rateLimit({
+app.use(rateLimit({
     windowMs: 1*60*1000,
     max: 10,
-    // keyGenerator : (req,res) => {
-    //     return req.ip;
-    // },
-});
+    keyGenerator : (req,res) => {
+        return req.ip;
+    },
+}));
 
 
 
