@@ -105,7 +105,7 @@ db.once("open", () => console.log("Connected to database !"))
 *                  
 *                 
 */
-
+app.enable('trust proxy');
 
 
 const limiter = rateLimit({
