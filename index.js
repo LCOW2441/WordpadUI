@@ -110,13 +110,13 @@ db.once("open", () => console.log("Connected to database !"))
 
 app.use(requestIp.mw());
 
-app.use(rateLimit({
+const limiter = rateLimit({
     windowMs: 1*60*1000,
     max: 10,
     keyGenerator : (req,res) => {
         return req.clientIp ;
     },
-}));
+});
 
 
 
@@ -132,7 +132,7 @@ app.use(rateLimit({
 *            200:
 *                description: To test GET method
 */
-// app.use(limiter);
+app.use(limiter);
 app.get("/", function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
