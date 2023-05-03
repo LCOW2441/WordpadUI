@@ -119,8 +119,8 @@ db.once("open", () => console.log("Connected to database !"))
 // });
 const limiter = (options) => {
     return rateLimit({
-      windowMs: options.windowMs,
-      max: options.max,
+      windowMs: 1 * 60 * 1000,
+      max: 10,
       keyGenerator: function (req) {
         return req.body.token; // Generate key based on user token
       }
