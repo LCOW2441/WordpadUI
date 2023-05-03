@@ -114,7 +114,7 @@ const limiter = rateLimit({
     windowMs: 1 * 60 * 1000,
     max: 10,
     keyGenerator: (req) => {
-        console.log(tokenData)
+        console.log(token)
         return req.headers.token;
         
     },
