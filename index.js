@@ -129,9 +129,13 @@ const limiter = rateLimit({
 *            200:
 *                description: To test GET method
 */
+const reqToken = req.headers.token
+if (reqToken) {
+    const tokenData = jwt.verify(reqToken, "Sktchie")
+
+app.use(limiter);}
 
 
-app.use(limiter);
 app.get("/", function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
