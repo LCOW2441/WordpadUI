@@ -110,14 +110,22 @@ db.once("open", () => console.log("Connected to database !"))
 
 // app.use(requestIp.mw());
 
-const limiter = rateLimit({
-    windowMs: 1 * 60 * 1000,
-    max: 10,
-    keyGenerator: (req, res) => {
-        return req.headers['x-auth-token'];
-    },
-});
-
+// const limiter = rateLimit({
+//     windowMs: 1 * 60 * 1000,
+//     max: 10,
+//     keyGenerator: (req) => {
+//         return req.headers.token;
+//     },
+// });
+const limiter = (options) => {
+    return rateLimit({
+      windowMs: options.windowMs,
+      max: options.max,
+      keyGenerator: function (req) {
+        return req.body.token; // Generate key based on user token
+      }
+    });
+}
 // const limiterFunction= (req, res) => {
 //     const reqToken = req.headers.token
 //     if (reqToken) {
@@ -139,7 +147,7 @@ const limiter = rateLimit({
 // app.use(limiterFunction);
 
 
-app.get("/", function (req, res) {
+app.get("/",limiter({ windowMs: 60 * 1000, max: 10 }), function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
 });
@@ -250,7 +258,7 @@ app.get('/logout', (req, res) => {
     }
     else {
         const tokenData = jwt.verify(reqToken, "Sktchie")
-        app.use(limiter);
+      
         Ninja.findById(tokenData.userId)
             .then(user => {
                 user.token = ""
