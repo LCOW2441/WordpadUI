@@ -118,13 +118,13 @@ const limiter = rateLimit({
     },
 });
 
-const limiterFunction= (req, res) => {
-    const reqToken = req.headers.token
-    if (reqToken) {
-        const tokenData = jwt.verify(reqToken, "Sktchie")
-        limiter()
-    }
-}
+// const limiterFunction= (req, res) => {
+//     const reqToken = req.headers.token
+//     if (reqToken) {
+//         const tokenData = jwt.verify(reqToken, "Sktchie")
+//         limiter()
+//     }
+// }
 
 /**
 *  @swagger
@@ -139,7 +139,7 @@ const limiterFunction= (req, res) => {
 // app.use(limiterFunction);
 
 
-app.get("/", limiterFunction, function (req, res) {
+app.get("/", function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
 });
@@ -250,7 +250,7 @@ app.get('/logout', (req, res) => {
     }
     else {
         const tokenData = jwt.verify(reqToken, "Sktchie")
-
+        app.use(limiter);
         Ninja.findById(tokenData.userId)
             .then(user => {
                 user.token = ""
