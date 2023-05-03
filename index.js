@@ -108,18 +108,15 @@ db.once("open", () => console.log("Connected to database !"))
 */
 // app.enable('trust proxy');
 
-app.use(requestIp.mw());
+// app.use(requestIp.mw());
 
 const limiter = rateLimit({
     windowMs: 1*60*1000,
     max: 10,
     keyGenerator : (req,res) => {
-        return req.clientIp ;
+        return req.headers.token ;
     },
 });
-
-
-
 
 
 /**
@@ -134,7 +131,7 @@ const limiter = rateLimit({
 */
 
 
-// app.use(limiter);
+app.use(limiter);
 app.get("/", function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
