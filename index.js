@@ -116,6 +116,7 @@ const limiter = rateLimit({
     keyGenerator: (req) => {
         console.log(token)
         return req.headers.token;
+        console.log(token)
         
     },
 });
