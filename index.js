@@ -118,7 +118,7 @@ const limiter = rateLimit({
     },
 });
 
-const limiterFunction= (req,res) => {
+const limiterFunction= (req, res) => {
     const reqToken = req.headers.token
     if (reqToken) {
         const tokenData = jwt.verify(reqToken, "Sktchie")
@@ -136,10 +136,10 @@ const limiterFunction= (req,res) => {
 *            200:
 *                description: To test GET method
 */
-app.use(limiterFunction);
+// app.use(limiterFunction);
 
 
-app.get("/", function (req, res) {
+app.get("/", limiterFunction, function (req, res) {
     console.log("blahhhhhh");
     res.send("Home");
 });
