@@ -144,14 +144,11 @@ const limiter = (options) => {
 *            200:
 *                description: To test GET method
 */
-// app.use(limiterFunction);
+app.use(limiter);
 
 
 app.get("/", function (req, res) {
     console.log("blahhhhhh");
-    const token = jwt.sign({ userId: ninja._id }, JWT_SECRET);
-    ninja.token = token;
-    limiter({ windowMs: 60 * 1000, max: 10 })
     res.send("Home");
 });
 
