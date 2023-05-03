@@ -118,7 +118,7 @@ const limiter = rateLimit({
     },
 });
 
-const limiterFunction= () => {
+const limiterFunction= (req,res) => {
     const reqToken = req.headers.token
     if (reqToken) {
         const tokenData = jwt.verify(reqToken, "Sktchie")
