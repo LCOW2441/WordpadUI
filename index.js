@@ -113,11 +113,13 @@ app.set('trust proxy', 1)
 const limiter = rateLimit({
     windowMs: 1 * 60 * 1000,
     max: 10,
-    keyGenerator: (req) => {
-        // console.log(token)
-        return req.headers.token;
+    standardHeaders: true,
+legacyHeaders: false,
+    // keyGenerator: (req) => {
+    //     // console.log(token)
+    //     return req.headers.token;
        
-    },
+    // },
 });
 // const limiter = (options) => {
 //     return rateLimit({
