@@ -119,13 +119,13 @@ db.once("open", () => console.log("Connected to database !"))
 //     }
 // }
 
-app.set('trust proxy', 1) 
-const limiter =  rateLimit({
-      windowMs: 1 * 60 * 1000,
-      max: 10,
-      keyGenerator: (request, response) => request.ip, //Generate key based on user token
-      }
-    );
+// app.set('trust proxy', 1) 
+// const limiter =  rateLimit({
+//       windowMs: 1 * 60 * 1000,
+//       max: 10,
+//       keyGenerator: (request, response) => request.ip, //Generate key based on user token
+//       }
+//     );
 
 // const limiter = (token) => {
 //     return rateLimit({
@@ -150,7 +150,7 @@ const limiter =  rateLimit({
 *            200:
 *                description: To test GET method
 */
-app.use(limiter);
+// app.use(limiter);
 
 
 app.get("/", function (req, res) {
