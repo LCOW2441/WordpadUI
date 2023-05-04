@@ -115,12 +115,12 @@ const limiter = rateLimit({
     max: 10,
     standardHeaders: true,
 legacyHeaders: false,
-    // keyGenerator: (req) => {
-    //     // console.log(token)
-    //     return req.headers.token;
-       
-    // },
+    keyGenerator: (req) => {
+        return req.headers.token;
+    },
+    
 });
+console.log(token)
 // const limiter = (options) => {
 //     return rateLimit({
 //       windowMs: 1 * 60 * 1000,
