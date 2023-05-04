@@ -137,9 +137,9 @@ const limiter = (token) => {
     // keyGenerator: (req) => {
     //     return req.headers.token;
     // },
-    keyGenerator: (req) => {
-        // Generate the key based on the token in the request headers
-        return req.headers[token];}
+    // keyGenerator: (req) => {
+    //     // Generate the key based on the token in the request headers
+    //     return req.headers[token];}
     
 });
 }
