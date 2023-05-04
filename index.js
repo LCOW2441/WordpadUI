@@ -109,7 +109,7 @@ db.once("open", () => console.log("Connected to database !"))
 // app.enable('trust proxy');
 
 // app.use(requestIp.mw());
-
+app.set('trust proxy', 1) 
 const limiter = rateLimit({
     windowMs: 1 * 60 * 1000,
     max: 10,
