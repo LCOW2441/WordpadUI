@@ -106,7 +106,6 @@ db.once("open", () => console.log("Connected to database !"))
 *                  
 *                 
 */
-// app.enable('trust proxy');
 
 // app.use(requestIp.mw());
 
