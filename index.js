@@ -110,15 +110,7 @@ db.once("open", () => console.log("Connected to database !"))
 
 // app.use(requestIp.mw());
 
-// const limiter = (options) => {
-//     return rateLimit({
-//       windowMs: 1 * 60 * 1000,
-//       max: 10,
-//       keyGenerator: function (req) {
-//         return req.body.token; // Generate key based on user token
-//       }
-//     });
-// }
+
 // const limiterFunction= (req, res) => {
 //     const reqToken = req.headers.token
 //     if (reqToken) {
@@ -128,21 +120,26 @@ db.once("open", () => console.log("Connected to database !"))
 // }
 
 app.set('trust proxy', 1) 
-const limiter = (token) => {
-    return rateLimit({
-    windowMs: 1 * 60 * 1000,
-    max: 10,
-    standardHeaders: true,
-    legacyHeaders: false,
-    // keyGenerator: (req) => {
-    //     return req.headers.token;
-    // },
-    // keyGenerator: (req) => {
-    //     // Generate the key based on the token in the request headers
-    //     return req.headers[token];}
-    
-});
-}
+const limiter =  rateLimit({
+      windowMs: 1 * 60 * 1000,
+      max: 10,
+      keyGenerator: function (req) {
+        return req.body.token; // Generate key based on user token
+      }
+    });
+
+// const limiter = (token) => {
+//     return rateLimit({
+//     windowMs: 1 * 60 * 1000,
+//     max: 10,
+//     standardHeaders: true,
+//     legacyHeaders: false,
+//     // keyGenerator: (req) => {
+//     //     return req.headers.token;
+//     // },
+   
+// });
+// }
 
 /**
 *  @swagger
