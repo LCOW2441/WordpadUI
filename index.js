@@ -123,10 +123,9 @@ app.set('trust proxy', 1)
 const limiter =  rateLimit({
       windowMs: 1 * 60 * 1000,
       max: 10,
-      keyGenerator: function (req) {
-        return req.body.token; // Generate key based on user token
+      keyGenerator: (request, response) => request.ip, //Generate key based on user token
       }
-    });
+    );
 
 // const limiter = (token) => {
 //     return rateLimit({
