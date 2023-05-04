@@ -115,9 +115,9 @@ const limiter = rateLimit({
     max: 10,
     standardHeaders: true,
     legacyHeaders: false,
-    keyGenerator: (req) => {
-        return req.headers.token;
-    },
+    // keyGenerator: (req) => {
+    //     return req.headers.token;
+    // },
     
 });
 // const limiter = (options) => {
