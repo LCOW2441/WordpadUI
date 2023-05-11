@@ -16,11 +16,7 @@ const Ninja = require("../models/ninja")
  *              properties:
  *                  id:
  *                      type: string
- *                  title:
- *                      type: string
  *                  content:
- *                      type: string
- *                  editable:
  *                      type: string
  * 
  *                  
@@ -61,7 +57,7 @@ router.get("/list", async function (req, res) {
     const reqToken = req.headers.token
     console.log(reqToken)
     if (!reqToken) {
-        return res.send({message:"Please Log In First"})
+        return res.send({ message: "Please Log In First" })
     }
     else {
         const tokenData = jwt.verify(reqToken, "Sktchie")
@@ -76,11 +72,145 @@ router.get("/list", async function (req, res) {
                 .catch(err => { return res.send(err) })
         }
         else {
-            return res.send({message:"Login First"})
+            return res.send({ message: "Login First" })
         }
     }
 });
 
+/**
+ * @swagger
+ * /notes/{id}/note-link:
+ *   get:
+ *     summary: Get sharing link for note
+ *     description: Generate a sharing link for a note with the given ID, and specify whether it should allow editing or only viewing.
+ *     tags:
+ *       - Notes
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the note to generate a sharing link for
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: type
+ *         required: true
+ *         description: The type of sharing link to generate. "edit" for an editable link, "view" for a view-only link.
+ *         schema:
+ *           type: string
+ *           enum: [edit, view]
+ *     responses:
+ *       200:
+ *         description: The generated sharing link
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 link:
+ *                   type: string
+ *                   description: The URL of the generated sharing link
+ */
+
+router.get('/:id/note-link', async function (req, res) {
+
+    const type = req.query.type
+    let token;
+    if (type === 'edit') {
+        token = jwt.sign({ type:"edit"}, "Sktchie");
+    } else {
+        token = jwt.sign({ type:"view"}, "Sktchie");
+    }
+
+    const link = `https://wordpad.app/notes/${id}/${token}`;
+    return res.status(200).json({ link });
+})
+
+
+/**
+ * @swagger
+ * /notes/{id}/{token}:
+ *   get:
+ *     summary: Get a note and its editability based on the provided token
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the note
+ *       - in: path
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token for view/edit access to the note
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The access token of the logged-in user
+ *     responses:
+ *       200:
+ *         description: The note and its editability
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 note:
+ *                   type: object
+ *                   description: The note details
+ *                 editable:
+ *                   type: boolean
+ *                   description: Whether the note can be edited or not
+ *       401:
+ *         description: Unauthorized access
+ *       404:
+ *         description: Note not found
+ *       500:
+ *         description: Internal server error
+ */
+
+router.get('/:id/:token', async function (req, res) {
+
+    const { _id } = req.params
+
+    const headerToken = req.headers.token
+    console.log(headerToken)
+    const tokenData = jwt.verify(headerToken, "Sktchie")
+
+    if (!tokenData) {
+        return res.json({ error: "Invalid Token" })
+    }
+
+    const user = await Ninja.findById(tokenData.userId);
+    const note = await Note.findById(_id);
+
+    let editable = true
+
+    if (note.author !== tokenData.userId) {
+        const reqToken = req.params.token
+        const reqTokenData = jwt.verify(reqToken, 'Sktchie')
+
+        if (reqTokenData.type=='view'){
+            editable = false
+        }
+
+        console.log(reqTokenData)
+    }
+
+
+        response= {
+            note: note,
+            editable: editable
+        }
+
+
+    return res.send(response)
+
+})
 /**
  *  @swagger
  * /notes/note/{id}:
@@ -111,7 +241,7 @@ router.get("/note/:id", (req, res) => {
     const reqToken = req.headers.token
     console.log(reqToken)
     if (!reqToken) {
-        return res.send({message:"Please Log In First"})
+        return res.send({ message: "Please Log In First" })
     }
     else {
         const tokenData = jwt.verify(reqToken, "Sktchie")
@@ -162,9 +292,9 @@ router.post("/add", async function (req, res) {
                     id: req.body.id,
                     username: user.name,
                     content: req.body.content,
-                    title: req.body.title,
+                    // title: req.body.title,
                     author: tokenData.userId,
-                    editable: req.body.editable
+                    // editable: req.body.editable
                 });
                 await newNote.save()
                     .then(note => {
@@ -216,16 +346,16 @@ router.put("/update", function (req, res) {
             .then(async note => {
                 console.log(note)
                 note.content = req.body.content || note.content
-                note.title = req.body.title || note.title
-                note.editable = req.body.editable || note.editable
+                // note.title = req.body.title || note.title
+                // note.editable = req.body.editable || note.editable
                 await note.save();
                 const resp = { message: "Note Updated" };
                 res.json(resp);
             })
-            .catch(err => { res.send({message:"Note doesn't exist"}) })
+            .catch(err => { res.send({ message: "Note doesn't exist" }) })
     }
     else {
-        res.status(401).send({message:"Login First"});
+        res.status(401).send({ message: "Login First" });
     }
 
 });
@@ -262,10 +392,10 @@ router.delete("/delete", async function (req, res) {
                 const resp = { message: "Note Updated" };
                 res.json(resp);
             })
-            .catch(err => { res.send({message:"Note doesn't exist"}) })
+            .catch(err => { res.send({ message: "Note doesn't exist" }) })
     }
     else {
-        res.status(401).send({message:"Login First"});
+        res.status(401).send({ message: "Login First" });
     }
 });
 

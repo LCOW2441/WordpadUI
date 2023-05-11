@@ -10,15 +10,15 @@ const noteSchema = mongoose.Schema({
     username: {
         type: String
     },
-    title: {
-        type: String
-    },
+    // title: {
+    //     type: String
+    // },
     content: {
         type: String
     },
-    editable: {
-        type: String
-    },
+    // editable: {
+    //     type: String
+    // },
     dateadded: {
         type: Date,
         default: Date.now,

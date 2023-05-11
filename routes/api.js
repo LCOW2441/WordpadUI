@@ -88,6 +88,8 @@ router.post('/ninjas', async function (req, res, next) {
         
 });
 
+
+
 /**
  *  @swagger
  * /api/ninjas/{id}:
@@ -152,7 +154,7 @@ router.delete('/ninjas/:id', function (req, res, next) {
     Ninja.findByIdAndRemove({ _id: req.params.id }).then(function (ninja) {
         res.send(ninja);
     });
-
+  
 });
 
 module.exports = router;
